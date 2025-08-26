@@ -31,8 +31,13 @@ minicc/
 
 ### File Operation Tools
 - `file_read`: Read file contents
-- `file_write`: Write to files
+- `file_write`: Write entire file (overwrites)
 - `file_list`: List directory files
+
+### File Editing Tools
+- `file_edit`: Find and replace content in files
+- `file_insert`: Insert content at specific line
+- `file_delete_lines`: Delete specific lines from files
 
 ### Shell Tool
 - `shell_execute`: Execute system commands

@@ -1,5 +1,6 @@
 import { BaseTool } from './base.tool';
 import { FileReadTool, FileWriteTool, FileListTool } from './file.tool';
+import { FileEditTool, FileInsertTool, FileDeleteLinesTool } from './edit.tool';
 import { ShellTool } from './shell.tool';
 import { SearchTool } from './search.tool';
 
@@ -11,10 +12,17 @@ export class ToolRegistry {
   }
 
   private registerBuiltinTools() {
-    // 注册内置工具
+    // File operation tools
     this.register(new FileReadTool());
     this.register(new FileWriteTool());
     this.register(new FileListTool());
+    
+    // File editing tools
+    this.register(new FileEditTool());
+    this.register(new FileInsertTool());
+    this.register(new FileDeleteLinesTool());
+    
+    // Other tools
     this.register(new ShellTool());
     this.register(new SearchTool());
   }

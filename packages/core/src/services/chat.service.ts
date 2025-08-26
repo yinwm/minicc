@@ -215,10 +215,11 @@ export class ChatService {
 
 Your capabilities include:
 1. Reading and writing files
-2. Executing shell commands
-3. Searching through code
-4. Listing directory contents
-5. Helping with programming tasks
+2. Editing files (find/replace, insert, delete lines)
+3. Executing shell commands
+4. Searching through code
+5. Listing directory contents
+6. Helping with programming tasks
 
 You should:
 - Be helpful and concise
@@ -229,7 +230,10 @@ You should:
 
 Available tools:
 - file_read: Read file contents
-- file_write: Write to files
+- file_write: Write entire file (overwrites)
+- file_edit: Edit file by replacing specific content
+- file_insert: Insert content at specific line
+- file_delete_lines: Delete specific lines from file
 - file_list: List directory contents
 - shell_execute: Execute shell commands
 - code_search: Search for patterns in code
