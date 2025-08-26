@@ -132,18 +132,23 @@ minicc/
 
 ## 核心工具
 
-### 文件操作工具 (file_*)
+### 文件操作工具
 - `file_read`: 读取文件内容
-- `file_write`: 写入文件
+- `file_write`: 写入文件（覆盖整个文件）
 - `file_list`: 列出目录文件
 
-### Shell 工具 (shell_execute)
-- 执行系统命令
+### 文件编辑工具
+- `file_edit`: 查找并替换文件内容
+- `file_insert`: 在指定行插入内容
+- `file_delete_lines`: 删除指定行
+
+### Shell 工具
+- `shell_execute`: 执行系统命令
 - 支持超时控制
 - 返回 stdout/stderr
 
-### 搜索工具 (code_search)
-- 在代码中搜索模式
+### 搜索工具
+- `code_search`: 在代码中搜索模式
 - 支持正则表达式
 - 可按文件类型过滤
 
