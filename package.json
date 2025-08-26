@@ -1,0 +1,34 @@
+{
+  "name": "@minicc/monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MiniCC - A minimal Claude Code implementation for learning",
+  "scripts": {
+    "dev": "pnpm -r --parallel run dev",
+    "build": "pnpm -r run build",
+    "clean": "pnpm -r run clean && rm -rf node_modules",
+    "lint": "eslint . --ext .ts,.tsx",
+    "type-check": "pnpm -r run type-check",
+    "minicc": "node packages/cli/dist/index.js",
+    "chat": "node packages/cli/dist/index.js chat",
+    "agent": "node packages/cli/dist/index.js agent"
+  },
+  "keywords": ["claude-code", "agent", "ai-assistant", "learning", "education"],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.4",
+    "rimraf": "^5.0.5",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}

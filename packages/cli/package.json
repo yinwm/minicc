@@ -1,0 +1,40 @@
+{
+  "name": "@minicc/cli",
+  "version": "0.1.0",
+  "description": "MiniCC CLI - Command line interface for MiniCC",
+  "bin": {
+    "minicc": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "start": "node bin/xiaoyi.js",
+    "clean": "rimraf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@types/pg": "^8.10.9",
+    "@minicc/core": "workspace:*",
+    "ascii-chart": "^1.3.3",
+    "asciichart": "^1.5.25",
+    "boxen": "^8.0.1",
+    "chalk": "^5.6.0",
+    "cli-table3": "^0.6.5",
+    "commander": "^11.1.0",
+    "date-fns": "^3.2.0",
+    "dotenv": "^17.2.1",
+    "figlet": "^1.7.0",
+    "fs-extra": "^11.2.0",
+    "inquirer": "^9.3.7",
+    "listr2": "^8.3.3",
+    "ora": "^8.2.0",
+    "pg": "^8.11.3",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/figlet": "^1.5.8",
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.9",
+    "@types/uuid": "^10.0.0"
+  }
+}

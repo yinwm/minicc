@@ -1,0 +1,21 @@
+{
+  "name": "@minicc/core",
+  "version": "0.1.0",
+  "description": "MiniCC Core - Agent framework and tool system",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "clean": "rimraf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "openai": "^4.26.0",
+    "pg": "^8.11.3",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.10.9"
+  }
+}
