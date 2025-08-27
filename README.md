@@ -27,6 +27,62 @@ minicc/
 │       └── commands/  # CLI commands
 ```
 
+## How It Works - Recursive Execution Flow
+
+The core innovation is the recursive tool execution that allows AI to complete multi-step tasks autonomously:
+
+```mermaid
+flowchart TD
+    Start([User Input]) --> AddMsg[Add User Message to Session]
+    AddMsg --> Process[processConversation]
+    
+    Process --> BuildPrompt[Build Messages Array<br/>System + History + User]
+    BuildPrompt --> CallAPI[Call LLM API<br/>with Tools Definitions]
+    
+    CallAPI --> CheckTools{AI Response<br/>Has Tool Calls?}
+    
+    CheckTools -->|Yes| SaveTools[Save AI Tool Request<br/>to Session]
+    SaveTools --> ExecuteTools[Execute Each Tool]
+    ExecuteTools --> SaveResults[Save Tool Results<br/>to Session]
+    SaveResults --> Recurse[Recursively Call<br/>processConversation]
+    Recurse --> Process
+    
+    CheckTools -->|No| SaveResponse[Save AI Text Response<br/>to Session]
+    SaveResponse --> Return([Return Final Answer])
+    
+    style Start fill:#e1f5e1
+    style Return fill:#e1f5e1
+    style Recurse fill:#ffe1e1
+    style Process fill:#fff4e1
+```
+
+### Key Points:
+
+1. **Single Entry Point**: All interactions go through `processConversation()`
+2. **AI-Driven Flow**: The AI decides when to use tools and when to stop
+3. **Natural Termination**: When AI returns text without tools, the recursion ends
+4. **Stateful Sessions**: All messages (user, assistant, tool results) are preserved
+
+### Example Execution Flows:
+
+#### Simple Query:
+```
+User: "Hello"
+→ AI: "Hello! How can I help?"
+→ End
+```
+
+#### Complex Task:
+```
+User: "Add a comment before function main"
+→ AI: [Calls file_read]
+→ System: [Returns file content]
+→ AI: [Calls file_edit with changes]
+→ System: [Returns success]
+→ AI: "Added comment before main function"
+→ End
+```
+
 ## Core Tools
 
 ### File Operation Tools

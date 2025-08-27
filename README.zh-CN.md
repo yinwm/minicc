@@ -121,6 +121,7 @@ minicc/
 │   │   ├── tools/     # 工具实现
 │   │   │   ├── base.tool.ts       # 工具基类
 │   │   │   ├── file.tool.ts       # 文件操作工具
+│   │   │   ├── edit.tool.ts       # 文件编辑工具
 │   │   │   ├── shell.tool.ts      # Shell命令工具
 │   │   │   └── search.tool.ts     # 代码搜索工具
 │   │   └── services/  # 业务服务
@@ -128,6 +129,62 @@ minicc/
 │   │       └── session.service.ts # 会话管理
 │   └── cli/            # 命令行界面
 │       └── commands/  # CLI 命令实现
+```
+
+## 工作原理 - 递归执行流程
+
+核心创新是递归工具执行机制，允许 AI 自主完成多步骤任务：
+
+```mermaid
+flowchart TD
+    Start([用户输入]) --> AddMsg[添加用户消息到会话]
+    AddMsg --> Process[processConversation]
+    
+    Process --> BuildPrompt[构建消息数组<br/>系统提示 + 历史 + 用户]
+    BuildPrompt --> CallAPI[调用 LLM API<br/>携带工具定义]
+    
+    CallAPI --> CheckTools{AI 响应<br/>包含工具调用？}
+    
+    CheckTools -->|是| SaveTools[保存 AI 工具请求<br/>到会话]
+    SaveTools --> ExecuteTools[执行每个工具]
+    ExecuteTools --> SaveResults[保存工具结果<br/>到会话]
+    SaveResults --> Recurse[递归调用<br/>processConversation]
+    Recurse --> Process
+    
+    CheckTools -->|否| SaveResponse[保存 AI 文本回复<br/>到会话]
+    SaveResponse --> Return([返回最终答案])
+    
+    style Start fill:#e1f5e1
+    style Return fill:#e1f5e1
+    style Recurse fill:#ffe1e1
+    style Process fill:#fff4e1
+```
+
+### 关键特点：
+
+1. **单一入口点**：所有交互都通过 `processConversation()` 处理
+2. **AI 驱动流程**：由 AI 决定何时使用工具、何时停止
+3. **自然终止**：当 AI 返回纯文本无工具调用时，递归结束
+4. **有状态会话**：所有消息（用户、助手、工具结果）都被保存
+
+### 执行流程示例：
+
+#### 简单查询：
+```
+用户: "你好"
+→ AI: "你好！有什么可以帮助您的吗？"
+→ 结束
+```
+
+#### 复杂任务：
+```
+用户: "在 main 函数前添加注释"
+→ AI: [调用 file_read]
+→ 系统: [返回文件内容]
+→ AI: [调用 file_edit 进行修改]
+→ 系统: [返回成功]
+→ AI: "已在 main 函数前添加注释"
+→ 结束
 ```
 
 ## 核心工具
