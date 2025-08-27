@@ -20,8 +20,8 @@
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
     "paths": {
-      "@xiaoyi/core": ["packages/core/src"],
-      "@xiaoyi/core/*": ["packages/core/src/*"]
+      "@minicc/core": ["packages/core/src"],
+      "@minicc/core/*": ["packages/core/src/*"]
     }
   },
   "exclude": ["node_modules", "dist", "build", "*.config.js"]

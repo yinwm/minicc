@@ -8,11 +8,12 @@ MiniCC (Minimal Claude Code) is an educational AI code assistant, similar to wha
 
 ## Features
 
-- 🛠️ **Tool System**: Extensible tool architecture supporting file operations, command execution, code search, etc.
-- 🤖 **LLM Integration**: Supports OpenAI API compatible large language models
+- 🛠️ **Tool System**: Extensible tool architecture supporting file operations, command execution, code search
+- 🤖 **LLM Integration**: Supports OpenAI API compatible large language models  
 - 📝 **Session Management**: Maintains context for multi-turn conversations
-- 🔧 **Easy to Extend**: Clear architecture for adding new features
-- 📚 **Learning Friendly**: Clean code with clear comments, perfect for learning
+- 🔄 **Recursive Execution**: AI autonomously completes multi-step tasks
+- 🎯 **Customizable System Prompt**: Easily modify AI behavior via `.minicc/system_prompt.md`
+- 📚 **Learning Friendly**: Clean code with clear architecture, perfect for learning
 
 ## Architecture
 
@@ -25,6 +26,9 @@ minicc/
 │   │   └── services/  # Business services
 │   └── cli/           # Command line interface
 │       └── commands/  # CLI commands
+├── .minicc/           # Configuration
+│   └── system_prompt.md  # Customizable system prompt
+└── .history/          # Session history storage
 ```
 
 ## How It Works - Recursive Execution Flow
@@ -63,50 +67,12 @@ flowchart TD
 3. **Natural Termination**: When AI returns text without tools, the recursion ends
 4. **Stateful Sessions**: All messages (user, assistant, tool results) are preserved
 
-### Example Execution Flows:
-
-#### Simple Query:
-```
-User: "Hello"
-→ AI: "Hello! How can I help?"
-→ End
-```
-
-#### Complex Task:
-```
-User: "Add a comment before function main"
-→ AI: [Calls file_read]
-→ System: [Returns file content]
-→ AI: [Calls file_edit with changes]
-→ System: [Returns success]
-→ AI: "Added comment before main function"
-→ End
-```
-
-## Core Tools
-
-### File Operation Tools
-- `file_read`: Read file contents
-- `file_write`: Write entire file (overwrites)
-- `file_list`: List directory files
-
-### File Editing Tools
-- `file_edit`: Find and replace content in files
-- `file_insert`: Insert content at specific line
-- `file_delete_lines`: Delete specific lines from files
-
-### Shell Tool
-- `shell_execute`: Execute system commands
-
-### Search Tool
-- `code_search`: Search patterns in code
-
 ## Quick Start
 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/minicc.git
+git clone https://github.com/yinwm/minicc.git
 cd minicc
 ```
 
@@ -118,11 +84,7 @@ pnpm install
 
 ### 3. Configure environment
 
-```bash
-cp .env.example .env
-```
-
-Edit `.env` file and set your API key:
+Create a `.env` file in the project root:
 
 ```env
 OPENAI_API_KEY=your-api-key-here
@@ -138,67 +100,44 @@ pnpm build
 
 ### 5. Run
 
-#### Option 1: Using pnpm scripts (Recommended)
-
 ```bash
-# Interactive chat
+# Interactive chat mode
 pnpm chat
 
 # Single query
-pnpm minicc query "List all files in current directory"
+pnpm query "List all files in current directory"
 
-# Manage sessions
-pnpm minicc sessions --list
+# With session management
+pnpm sessions --list
 ```
 
-#### Option 2: Global installation
+## Core Tools
+
+### File Operations
+- `file_read`: Read file contents
+- `file_write`: Write entire file
+- `file_list`: List directory files
+
+### File Editing
+- `file_edit`: Find and replace content
+- `file_insert`: Insert at specific line
+- `file_delete_lines`: Delete line ranges
+
+### Execution
+- `shell_execute`: Execute system commands
+- `code_search`: Search patterns in code
+
+## Customization
+
+### System Prompt
+
+Customize AI behavior by editing `.minicc/system_prompt.md`:
 
 ```bash
-# Link CLI globally
-cd packages/cli
-npm link
-
-# Then use globally
-minicc chat
-minicc query "your question"
-minicc sessions
+vim .minicc/system_prompt.md
 ```
 
-## Usage Examples
-
-### Interactive Chat Mode
-
-```bash
-pnpm chat
-```
-
-You can then:
-- Ask questions for programming help
-- Type `help` for help
-- Type `clear` to clear screen
-- Type `history` to view conversation history
-- Type `exit` to quit
-
-### Single Query
-
-```bash
-pnpm minicc query "Read the content of package.json"
-```
-
-### Session Management
-
-```bash
-# List all sessions
-pnpm minicc sessions --list
-
-# Delete specific session
-pnpm minicc sessions --delete <session-id>
-
-# Clear all sessions
-pnpm minicc sessions --clear
-```
-
-## Extension Guide
+The file uses Markdown format for easy editing and version control. Changes are applied on next run.
 
 ### Adding New Tools
 
@@ -221,66 +160,86 @@ export class MyTool extends BaseTool {
   
   async execute(args: any): Promise<ToolExecutionResult> {
     // Implement your logic
-    return {
-      success: true,
-      data: 'result'
-    };
+    return { success: true, data: 'result' };
   }
 }
 ```
 
-2. Register in `registry.ts`:
+2. Register in tool registry
 
-```typescript
-this.register(new MyTool());
+## Usage Examples
+
+### Interactive Mode
+
+```bash
+$ pnpm chat
+
+╭───────────────────────────────────────╮
+│   MiniCC - AI Programming Assistant   │
+│   Type "exit" or "quit" to leave      │
+│   Type "help" for help                │
+╰───────────────────────────────────────╯
+
+✓ Loaded system prompt from .minicc/system_prompt.md
+
+Your question: Read README.md and summarize it
 ```
 
-### Creating Custom Agents
+### Command Examples
 
-You can create specialized agents based on the tool system:
-- Code review assistant
-- Documentation generator
-- Test writer
-- Refactoring helper
+```bash
+# File operations
+pnpm query "Read package.json"
+pnpm query "List all TypeScript files"
+pnpm query "Search for TODO comments"
+
+# Code modifications
+pnpm query "Add a comment to main function"
+pnpm query "Fix the import statements"
+
+# Shell operations
+pnpm query "Run npm test"
+pnpm query "Check git status"
+```
+
+## Project Scripts
+
+```bash
+pnpm build    # Build all packages
+pnpm chat     # Start interactive mode
+pnpm query    # Execute single query
+pnpm sessions # Manage sessions
+pnpm clean    # Clean build artifacts
+```
 
 ## Learning Resources
 
-- [Tool System Design](packages/core/src/tools/)
-- [LLM Integration](packages/core/src/llm/)
-- [Session Management](packages/core/src/services/)
-
-## Comparison with Claude Code
-
-| Feature | MiniCC | Claude Code |
-|---------|--------|-------------|
-| Target Users | Learners/Developers | End Users |
-| Code Complexity | Simple | Complex |
-| Feature Completeness | Basic | Complete |
-| Extensibility | High | - |
-| Documentation | Educational | Usage-focused |
+- **Tool System**: See `packages/core/src/tools/` for tool implementations
+- **LLM Integration**: Check `packages/core/src/llm/` for API integration
+- **Session Management**: Review `packages/core/src/services/session.service.ts`
+- **CLI Structure**: Explore `packages/cli/src/commands/` for CLI implementation
 
 ## FAQ
 
-### Q: How to use other LLMs?
-A: Modify `OPENAI_BASE_URL` and `MODEL` in `.env` file. Any OpenAI-compatible API will work.
+**Q: How to use other LLMs?**  
+A: Set `OPENAI_BASE_URL` to any OpenAI-compatible API endpoint (e.g., Ollama, LM Studio, SiliconFlow)
 
-### Q: How to add new tools?
-A: See the "Extension Guide" section. Create a new tool class and register it.
+**Q: Where are sessions stored?**  
+A: In `.history/` directory, automatically created on first run
 
-### Q: Where are session histories saved?
-A: By default in `.history/` folder in the project root.
+**Q: How to reset the system prompt?**  
+A: Edit `.minicc/system_prompt.md` or delete it to use defaults
 
-### Q: How to contribute?
-A: Fork the project, create a branch, submit a PR. Please ensure clear code with comments.
+**Q: Can I use this in production?**  
+A: MiniCC is designed for learning. For production, use official Claude Code or mature alternatives
 
 ## Contributing
 
-Contributions are welcome! This is a learning project, we encourage:
-- Clear code with comments
-- Educational examples
-- Architecture improvements
+Contributions welcome! Focus on:
+- Clear, educational code
 - Tool extensions
 - Documentation improvements
+- Bug fixes
 
 ## License
 
@@ -288,10 +247,10 @@ MIT
 
 ---
 
-> 💡 **Note**: MiniCC is created for learning purposes. For production AI programming assistants, please use official Claude Code or other mature solutions.
+> 💡 **Note**: MiniCC is an educational project for understanding AI assistants. For production use, consider official solutions.
 
 ## Links
 
-- [中文文档](README.zh-CN.md)
-- [Issues](https://github.com/yourusername/minicc/issues)
-- [Discussions](https://github.com/yourusername/minicc/discussions)
+- [中文文档](README_CN.md)
+- [System Prompt Guide](SYSTEM_PROMPT.md)
+- [GitHub Issues](https://github.com/yinwm/minicc/issues)

@@ -149,7 +149,7 @@ async function viewSession(sessionManager: SessionManager, sessionId: string) {
   console.log(chalk.gray(`最后更新: ${session.lastUpdateTime.toLocaleString()}`));
   console.log();
 
-  session.messages.forEach((msg, index) => {
+  session.messages.forEach((msg: any, index: number) => {
     if (msg.role === 'user') {
       console.log(chalk.blue(`[${index}] 用户:`));
       console.log(`  ${msg.content}`);

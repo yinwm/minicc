@@ -2,6 +2,8 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { ChatService, SessionManager, LLMClient, ToolRegistry } from '@minicc/core';
 import { v4 as uuidv4 } from 'uuid';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export async function queryCommand(question: string, options: any) {
   const spinner = ora('Initializing services...').start();
@@ -17,11 +19,18 @@ export async function queryCommand(question: string, options: any) {
       process.exit(1);
     }
 
+    // Load custom system prompt if available
+    let customPrompt: string | undefined;
+    const promptFile = path.resolve('.minicc/system_prompt.md');
+    if (fs.existsSync(promptFile)) {
+      customPrompt = fs.readFileSync(promptFile, 'utf-8').trim();
+    }
+    
     // Initialize services
     const llmClient = new LLMClient({ apiKey, baseURL, model });
     const toolRegistry = new ToolRegistry();
     const sessionManager = new SessionManager('.history');
-    const chatService = new ChatService(llmClient, toolRegistry, sessionManager, model);
+    const chatService = new ChatService(llmClient, toolRegistry, sessionManager, model, customPrompt);
 
     // Determine session ID
     const sessionId = options.session || uuidv4();

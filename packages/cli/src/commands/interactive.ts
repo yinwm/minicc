@@ -4,7 +4,8 @@ import ora from 'ora';
 import boxen from 'boxen';
 import { ChatService, SessionManager, LLMClient, ToolRegistry } from '@minicc/core';
 import { v4 as uuidv4 } from 'uuid';
-import { displayData } from '../utils/display';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export async function startInteractiveMode(options: any) {
   // Display welcome message
@@ -101,11 +102,21 @@ async function initServices() {
     process.exit(1);
   }
 
+  // Load custom system prompt if available
+  let customPrompt: string | undefined;
+  
+  // Check for .minicc/system_prompt.md file
+  const promptFile = path.resolve('.minicc/system_prompt.md');
+  if (fs.existsSync(promptFile)) {
+    customPrompt = fs.readFileSync(promptFile, 'utf-8').trim();
+    console.log(chalk.gray('✓ Loaded system prompt from .minicc/system_prompt.md'));
+  }
+  
   // Initialize services
   const llmClient = new LLMClient({ apiKey, baseURL, model });
   const toolRegistry = new ToolRegistry();
   const sessionManager = new SessionManager('.history');
-  const chatService = new ChatService(llmClient, toolRegistry, sessionManager, model);
+  const chatService = new ChatService(llmClient, toolRegistry, sessionManager, model, customPrompt);
 
   return { chatService, sessionManager };
 }
@@ -126,7 +137,7 @@ async function getOrCreateSession(): Promise<string> {
       message: 'Select session:',
       choices: [
         { name: 'Create new session', value: 'new' },
-        ...sessions.map(id => ({
+        ...sessions.map((id: string) => ({
           name: `Continue session: ${id}`,
           value: id
         }))
@@ -168,7 +179,7 @@ async function showHistory(sessionManager: SessionManager, sessionId: string) {
 
   console.log(chalk.cyan('\n=== Session History ===\n'));
   
-  session.messages.forEach(msg => {
+  session.messages.forEach((msg: any) => {
     if (msg.role === 'user') {
       console.log(chalk.blue('User:'), msg.content);
     } else if (msg.role === 'assistant' && msg.content) {

@@ -6,14 +6,31 @@ import { SessionManager } from './session.service';
 
 export class ChatService {
   private openai: OpenAI;
+  private systemPrompt: string;
   
   constructor(
     private llmClient: LLMClient,
     private toolRegistry: ToolRegistry,
     private sessionManager: SessionManager,
-    private model: string = 'gpt-4'
+    private model: string = 'gpt-4',
+    systemPrompt?: string
   ) {
     this.openai = this.llmClient.getClient();
+    this.systemPrompt = systemPrompt || this.getDefaultSystemPrompt();
+  }
+
+  // Get default system prompt
+  private getDefaultSystemPrompt(): string {
+    return `You are MiniCC, an AI programming assistant based on the Claude Code architecture.
+
+You should:
+- Be helpful and concise
+- Use tools when needed to accomplish tasks
+- Provide clear explanations
+- Follow best practices in coding
+- Ask for clarification when needed
+
+Remember to use the available tools effectively to help users with your programming tasks.`;
   }
 
   async chat(sessionId: string, userMessage: string): Promise<string> {
@@ -34,8 +51,7 @@ export class ChatService {
     }
 
     try {
-      const systemPrompt = this.buildSystemPrompt();
-      return await this.processConversation(session, systemPrompt);
+      return await this.processConversation(session, this.systemPrompt);
     } catch (error: any) {
       console.error('Chat service error:', error);
       
@@ -162,34 +178,13 @@ export class ChatService {
     }
   }
 
-  private buildSystemPrompt(): string {
-    return `You are MiniCC, an AI programming assistant based on the Claude Code architecture.
+  // Get system prompt
+  getSystemPrompt(): string {
+    return this.systemPrompt;
+  }
 
-Your capabilities include:
-1. Reading and writing files
-2. Editing files (find/replace, insert, delete lines)
-3. Executing shell commands
-4. Searching through code
-5. Listing directory contents
-6. Helping with programming tasks
-
-You should:
-- Be helpful and concise
-- Use tools when needed to accomplish tasks
-- Provide clear explanations
-- Follow best practices in coding
-- Ask for clarification when needed
-
-Available tools:
-- file_read: Read file contents
-- file_write: Write entire file (overwrites)
-- file_edit: Edit file by replacing specific content
-- file_insert: Insert content at specific line
-- file_delete_lines: Delete specific lines from file
-- file_list: List directory contents
-- shell_execute: Execute shell commands
-- code_search: Search for patterns in code
-
-Remember to use these tools effectively to help users with their programming tasks.`;
+  // Update system prompt
+  setSystemPrompt(prompt: string): void {
+    this.systemPrompt = prompt;
   }
 }
