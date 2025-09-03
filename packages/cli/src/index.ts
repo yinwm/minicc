@@ -8,7 +8,7 @@ import { listSessionsCommand } from './commands/sessions';
 
 const program = new Command();
 
-program.name('minicc').description('MiniCC - Minimal Claude Code CLI').version('0.2.1');
+program.name('minicc').description('MiniCC - Minimal Claude Code CLI').version('0.2.2');
 
 // Main command - handle interactive mode and single argument
 program

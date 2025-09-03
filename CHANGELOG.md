@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [0.2.1] - 2025-09-03
+## [0.2.2] - 2025-09-03
 
 ### 🎉 Major Features
 
@@ -23,7 +23,7 @@
 ### 📦 Package Changes
 
 - **New Package**: `@minicc/sdk` for programmatic usage
-- **Updated**: All packages to version 0.2.1 with improved compatibility
+- **Updated**: All packages to version 0.2.2 with improved compatibility
 
 ---
 

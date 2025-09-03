@@ -1,6 +1,6 @@
 {
   "name": "@minicc/sdk",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "MiniCC SDK - Software Development Kit for building AI agents",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -31,7 +31,7 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@minicc/core": "workspace:*"
+    "@minicc/core": "^0.2.2"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
