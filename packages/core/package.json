@@ -12,6 +12,26 @@
     "test": "jest",
     "test:watch": "jest --watch"
   },
+  "keywords": [
+    "ai",
+    "agent",
+    "core",
+    "claude-code",
+    "minicc",
+    "programming-assistant"
+  ],
+  "author": "",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "openai": "^4.26.0"
   },
