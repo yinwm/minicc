@@ -110,10 +110,10 @@ pnpm build
 
 ```bash
 # 交互式聊天模式
-pnpm chat
+pnpm minicc
 
 # 单次查询
-pnpm query "列出当前目录所有文件"
+pnpm minicc -p "列出当前目录所有文件"
 
 # 会话管理
 pnpm sessions --list
@@ -183,12 +183,11 @@ export class MyTool extends BaseTool {
 ### 交互模式
 
 ```bash
-$ pnpm chat
+$ pnpm minicc
 
 ╭───────────────────────────────────────╮
 │   MiniCC - AI 编程助手                │
 │   输入 "exit" 或 "quit" 退出          │
-│   输入 "help" 查看帮助                │
 ╰───────────────────────────────────────╯
 
 ✓ 已加载系统提示 .minicc/system_prompt.md
@@ -200,27 +199,27 @@ $ pnpm chat
 
 ```bash
 # 文件操作
-pnpm query "读取 package.json"
-pnpm query "列出所有 TypeScript 文件"
-pnpm query "搜索 TODO 注释"
+pnpm minicc -p "读取 package.json"
+pnpm minicc -p "列出所有 TypeScript 文件"
+pnpm minicc -p "搜索 TODO 注释"
 
 # 代码修改
-pnpm query "给 main 函数添加注释"
-pnpm query "修复 import 语句"
+pnpm minicc -p "给 main 函数添加注释"
+pnpm minicc -p "修复 import 语句"
 
 # Shell 操作
-pnpm query "运行 npm test"
-pnpm query "检查 git 状态"
+pnpm minicc -p "运行 npm test"
+pnpm minicc -p "检查 git 状态"
 ```
 
 ## 项目脚本
 
 ```bash
-pnpm build    # 构建所有包
-pnpm chat     # 启动交互模式
-pnpm query    # 执行单次查询
-pnpm sessions # 管理会话
-pnpm clean    # 清理构建产物
+pnpm build     # 构建所有包
+pnpm minicc    # 启动交互模式
+pnpm minicc -p # 执行单次查询
+pnpm sessions  # 管理会话
+pnpm clean     # 清理构建产物
 ```
 
 ## 学习资源

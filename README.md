@@ -115,7 +115,7 @@ pnpm build
 pnpm chat
 
 # Single query
-pnpm query "List all files in current directory"
+pnpm minicc -p "List all files in current directory"
 
 # With session management
 pnpm sessions --list
@@ -190,7 +190,6 @@ $ pnpm chat
 ╭───────────────────────────────────────╮
 │   MiniCC - AI Programming Assistant   │
 │   Type "exit" or "quit" to leave      │
-│   Type "help" for help                │
 ╰───────────────────────────────────────╯
 
 ✓ Loaded system prompt from .minicc/system_prompt.md
@@ -202,27 +201,27 @@ Your question: Read README.md and summarize it
 
 ```bash
 # File operations
-pnpm query "Read package.json"
-pnpm query "List all TypeScript files"
-pnpm query "Search for TODO comments"
+pnpm minicc -p "Read package.json"
+pnpm minicc -p "List all TypeScript files"
+pnpm minicc -p "Search for TODO comments"
 
 # Code modifications
-pnpm query "Add a comment to main function"
-pnpm query "Fix the import statements"
+pnpm minicc -p "Add a comment to main function"
+pnpm minicc -p "Fix the import statements"
 
 # Shell operations
-pnpm query "Run npm test"
-pnpm query "Check git status"
+pnpm minicc -p "Run npm test"
+pnpm minicc -p "Check git status"
 ```
 
 ## Project Scripts
 
 ```bash
-pnpm build    # Build all packages
-pnpm chat     # Start interactive mode
-pnpm query    # Execute single query
-pnpm sessions # Manage sessions
-pnpm clean    # Clean build artifacts
+pnpm build     # Build all packages
+pnpm minicc    # Start interactive mode
+pnpm minicc -p # Execute single query
+pnpm sessions  # Manage sessions
+pnpm clean     # Clean build artifacts
 ```
 
 ## Usage Options
