@@ -28,10 +28,10 @@ export class SessionManager {
       messages: [],
       context: {}
     };
-    
+
     this.sessions.set(id, session);
     await this.saveSession(session);
-    
+
     return session;
   }
 
@@ -46,7 +46,7 @@ export class SessionManager {
       const filePath = this.getSessionFilePath(id);
       const data = await fs.readFile(filePath, 'utf-8');
       const session = JSON.parse(data);
-      
+
       // 恢复日期对象
       session.startTime = new Date(session.startTime);
       session.lastUpdateTime = new Date(session.lastUpdateTime);
@@ -55,7 +55,7 @@ export class SessionManager {
           msg.timestamp = new Date(msg.timestamp);
         }
       });
-      
+
       this.sessions.set(id, session);
       return session;
     } catch (error) {
@@ -66,7 +66,7 @@ export class SessionManager {
 
   async saveSession(session: Session): Promise<void> {
     session.lastUpdateTime = new Date();
-    
+
     try {
       const filePath = this.getSessionFilePath(session.id);
       const data = JSON.stringify(session, null, 2);
@@ -81,20 +81,20 @@ export class SessionManager {
   async listSessions(): Promise<string[]> {
     try {
       const files = await fs.readdir(this.historyDir);
-      return files
-        .filter(file => file.endsWith('.json'))
-        .map(file => file.replace('.json', ''));
+      return files.filter(file => file.endsWith('.json')).map(file => file.replace('.json', ''));
     } catch (error) {
       console.error('Failed to list sessions:', error);
       return [];
     }
   }
 
-  async listSessionsWithDetails(): Promise<Array<{id: string, name?: string, createdAt: Date, messageCount: number}>> {
+  async listSessionsWithDetails(): Promise<
+    Array<{ id: string; name?: string; createdAt: Date; messageCount: number }>
+  > {
     try {
       const sessionIds = await this.listSessions();
       const sessions = [];
-      
+
       for (const id of sessionIds) {
         const session = await this.getSession(id);
         if (session) {
@@ -107,7 +107,7 @@ export class SessionManager {
           });
         }
       }
-      
+
       return sessions;
     } catch (error) {
       console.error('Failed to list session details:', error);
@@ -117,7 +117,7 @@ export class SessionManager {
 
   async deleteSession(id: string): Promise<void> {
     this.sessions.delete(id);
-    
+
     try {
       const filePath = this.getSessionFilePath(id);
       await fs.unlink(filePath);
@@ -129,7 +129,7 @@ export class SessionManager {
 
   async clearAllSessions(): Promise<void> {
     this.sessions.clear();
-    
+
     try {
       const files = await fs.readdir(this.historyDir);
       for (const file of files) {
@@ -149,12 +149,15 @@ export class SessionManager {
   }
 
   // 获取会话摘要（用于列表显示）
-  async getSessionSummary(id: string): Promise<{
-    id: string;
-    startTime: Date;
-    messageCount: number;
-    lastMessage?: string;
-  } | undefined> {
+  async getSessionSummary(id: string): Promise<
+    | {
+        id: string;
+        startTime: Date;
+        messageCount: number;
+        lastMessage?: string;
+      }
+    | undefined
+  > {
     const session = await this.getSession(id);
     if (!session) return undefined;
 

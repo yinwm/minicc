@@ -10,7 +10,14 @@
     "clean": "rimraf dist",
     "type-check": "tsc --noEmit"
   },
-  "keywords": ["ai", "agent", "sdk", "claude-code", "minicc", "programming-assistant"],
+  "keywords": [
+    "ai",
+    "agent",
+    "sdk",
+    "claude-code",
+    "minicc",
+    "programming-assistant"
+  ],
   "author": "",
   "license": "MIT",
   "publishConfig": {

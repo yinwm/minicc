@@ -7,7 +7,7 @@ const execAsync = promisify(exec);
 export class ShellTool extends BaseTool {
   name = 'shell_execute';
   description = 'Execute a shell command';
-  
+
   parameters = {
     type: 'object',
     properties: {
@@ -29,7 +29,11 @@ export class ShellTool extends BaseTool {
     required: ['command']
   };
 
-  async execute(args: { command: string; cwd?: string; timeout?: number }): Promise<ToolExecutionResult> {
+  async execute(args: {
+    command: string;
+    cwd?: string;
+    timeout?: number;
+  }): Promise<ToolExecutionResult> {
     try {
       const options = {
         cwd: args.cwd || process.cwd(),
@@ -38,7 +42,7 @@ export class ShellTool extends BaseTool {
       };
 
       const { stdout, stderr } = await execAsync(args.command, options);
-      
+
       return {
         success: true,
         data: {

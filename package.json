@@ -8,6 +8,9 @@
     "build": "find . -name 'tsconfig.tsbuildinfo' -delete && pnpm --filter @minicc/core build && pnpm --filter @minicc/sdk build && pnpm --filter @minicc/cli build",
     "clean": "pnpm -r run clean && rm -rf node_modules",
     "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "type-check": "pnpm -r run type-check",
     "minicc": "npx tsx packages/cli/src/index.ts",
     "chat": "npx tsx packages/cli/src/index.ts",
@@ -18,7 +21,13 @@
     "query:prod": "node packages/cli/dist/index.js -p",
     "sessions:prod": "node packages/cli/dist/index.js sessions --list"
   },
-  "keywords": ["claude-code", "agent", "ai-assistant", "learning", "education"],
+  "keywords": [
+    "claude-code",
+    "agent",
+    "ai-assistant",
+    "learning",
+    "education"
+  ],
   "author": "",
   "license": "MIT",
   "engines": {
@@ -28,9 +37,9 @@
   "packageManager": "pnpm@8.15.0",
   "devDependencies": {
     "@types/node": "^20.11.0",
-    "@typescript-eslint/eslint-plugin": "^6.19.0",
-    "@typescript-eslint/parser": "^6.19.0",
-    "eslint": "^8.56.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.1",
     "prettier": "^3.2.4",
     "rimraf": "^5.0.5",
     "tsx": "^4.7.0",

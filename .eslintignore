@@ -1,0 +1,9 @@
+dist/
+node_modules/
+*.js
+__tests__/
+jest.config.js
+.minicc/
+CHANGELOG*.md
+README*.md
+*.json

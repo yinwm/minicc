@@ -1,14 +1,9 @@
-import { 
-  LLMClient, 
-  ToolRegistry, 
-  SessionManager, 
-  ChatService 
-} from '@minicc/core';
+import { LLMClient, ToolRegistry, SessionManager, ChatService } from '@minicc/core';
 import type { AgentConfig, AgentInstance } from './types';
 
 /**
  * Create an AI agent instance with the provided configuration
- * 
+ *
  * @param config Agent configuration
  * @returns Agent instance with chat functionality
  */

@@ -39,21 +39,21 @@ minicc/
 flowchart TD
     Start([用户输入]) --> AddMsg[添加用户消息到会话]
     AddMsg --> Process[processConversation]
-    
+
     Process --> BuildPrompt[构建消息数组<br/>系统提示 + 历史 + 用户]
     BuildPrompt --> CallAPI[调用 LLM API<br/>带工具定义]
-    
+
     CallAPI --> CheckTools{AI 响应<br/>有工具调用？}
-    
+
     CheckTools -->|是| SaveTools[保存 AI 工具请求<br/>到会话]
     SaveTools --> ExecuteTools[执行每个工具]
     ExecuteTools --> SaveResults[保存工具结果<br/>到会话]
     SaveResults --> Recurse[递归调用<br/>processConversation]
     Recurse --> Process
-    
+
     CheckTools -->|否| SaveResponse[保存 AI 文本响应<br/>到会话]
     SaveResponse --> Return([返回最终答案])
-    
+
     style Start fill:#e1f5e1
     style Return fill:#e1f5e1
     style Recurse fill:#ffe1e1
@@ -122,16 +122,19 @@ pnpm sessions --list
 ## 核心工具
 
 ### 文件操作
+
 - `file_read`：读取文件内容
 - `file_write`：写入整个文件
 - `file_list`：列出目录文件
 
 ### 文件编辑
+
 - `file_edit`：查找和替换内容
 - `file_insert`：在指定行插入内容
 - `file_delete_lines`：删除行范围
 
 ### 执行工具
+
 - `shell_execute`：执行系统命令
 - `code_search`：搜索代码模式
 
@@ -157,7 +160,7 @@ import { BaseTool, ToolExecutionResult } from './base.tool';
 export class MyTool extends BaseTool {
   name = 'my_tool';
   description = '我的自定义工具';
-  
+
   parameters = {
     type: 'object',
     properties: {
@@ -165,7 +168,7 @@ export class MyTool extends BaseTool {
     },
     required: ['input']
   };
-  
+
   async execute(args: any): Promise<ToolExecutionResult> {
     // 实现你的逻辑
     return { success: true, data: 'result' };
@@ -244,6 +247,7 @@ pnpm clean    # 清理构建产物
 ## 贡献指南
 
 欢迎贡献！重点关注：
+
 - 清晰的教学性代码
 - 工具扩展
 - 文档改进

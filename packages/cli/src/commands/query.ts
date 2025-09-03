@@ -10,19 +10,18 @@ export async function queryCommand(question: string, options: any) {
     const { agent, sessionId } = await initializeAgent({
       sessionId: options.session
     });
-    
+
     spinner.text = 'Thinking...';
 
     // Execute query
     const response = await agent.chat(sessionId, question);
-    
+
     spinner.succeed('Query completed');
 
     // Display result
     console.log('\n' + chalk.green('Answer:'));
     console.log(response);
     console.log('\n' + chalk.gray(`Session ID: ${sessionId}`));
-
   } catch (error: any) {
     spinner.fail('Query failed');
     console.error(chalk.red('Error:'), error.message);

@@ -1,15 +1,11 @@
 // 简化后的类型定义
 
-import { 
-  ChatCompletionMessageParam,
-  ChatCompletionToolMessageParam,
-  ChatCompletionAssistantMessageParam 
-} from 'openai/resources/chat/completions';
+import { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 
 // 会话相关
 export type Message = ChatCompletionMessageParam & {
   timestamp?: Date;
-}
+};
 
 export interface Session {
   id: string;
@@ -26,7 +22,7 @@ export interface ToolDefinition {
   function: {
     name: string;
     description: string;
-    parameters: Record<string, any>;  // JSON Schema
+    parameters: Record<string, any>; // JSON Schema
   };
 }
 

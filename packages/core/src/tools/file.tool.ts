@@ -5,7 +5,7 @@ import * as path from 'path';
 export class FileReadTool extends BaseTool {
   name = 'file_read';
   description = 'Read contents of a file';
-  
+
   parameters = {
     type: 'object',
     properties: {
@@ -21,7 +21,7 @@ export class FileReadTool extends BaseTool {
     try {
       const absolutePath = path.resolve(args.path);
       const content = await fs.readFile(absolutePath, 'utf-8');
-      
+
       return {
         success: true,
         data: content
@@ -38,7 +38,7 @@ export class FileReadTool extends BaseTool {
 export class FileWriteTool extends BaseTool {
   name = 'file_write';
   description = 'Write content to a file';
-  
+
   parameters = {
     type: 'object',
     properties: {
@@ -60,19 +60,23 @@ export class FileWriteTool extends BaseTool {
     required: ['path', 'content']
   };
 
-  async execute(args: { path: string; content: string; mode?: string }): Promise<ToolExecutionResult> {
+  async execute(args: {
+    path: string;
+    content: string;
+    mode?: string;
+  }): Promise<ToolExecutionResult> {
     try {
       const absolutePath = path.resolve(args.path);
       const dir = path.dirname(absolutePath);
-      
+
       await fs.mkdir(dir, { recursive: true });
-      
+
       if (args.mode === 'append') {
         await fs.appendFile(absolutePath, args.content);
       } else {
         await fs.writeFile(absolutePath, args.content);
       }
-      
+
       return {
         success: true,
         data: `File written successfully: ${absolutePath}`
@@ -89,7 +93,7 @@ export class FileWriteTool extends BaseTool {
 export class FileListTool extends BaseTool {
   name = 'file_list';
   description = 'List files in a directory';
-  
+
   parameters = {
     type: 'object',
     properties: {
@@ -110,7 +114,7 @@ export class FileListTool extends BaseTool {
     try {
       const dirPath = path.resolve(args.path || '.');
       const files = await this.listFiles(dirPath, args.recursive || false);
-      
+
       return {
         success: true,
         data: files
@@ -129,7 +133,7 @@ export class FileListTool extends BaseTool {
 
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry.name);
-      
+
       if (entry.isDirectory() && recursive) {
         const subFiles = await this.listFiles(fullPath, recursive);
         files.push(...subFiles);

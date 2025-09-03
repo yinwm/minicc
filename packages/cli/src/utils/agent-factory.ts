@@ -1,8 +1,8 @@
 import { createAgent, SessionManager } from '@minicc/sdk';
-import { v4 as uuidv4 } from 'uuid';
 import * as fs from 'fs';
 import * as path from 'path';
 import chalk from 'chalk';
+import { SessionHelper } from './session-helper';
 
 export interface AgentInitOptions {
   sessionId?: string;
@@ -27,8 +27,16 @@ export async function initializeAgent(options: AgentInitOptions = {}): Promise<I
     console.error(chalk.red('Error: OPENAI_API_KEY environment variable is required'));
     console.error(chalk.yellow('\nTo set your configuration:'));
     console.error(chalk.gray('  export OPENAI_API_KEY=your-api-key-here'));
-    console.error(chalk.gray('  export OPENAI_BASE_URL=https://api.openai.com/v1    # Optional, defaults to OpenAI'));
-    console.error(chalk.gray('  export MODEL=gpt-4                                  # Optional, defaults to gpt-4'));
+    console.error(
+      chalk.gray(
+        '  export OPENAI_BASE_URL=https://api.openai.com/v1    # Optional, defaults to OpenAI'
+      )
+    );
+    console.error(
+      chalk.gray(
+        '  export MODEL=gpt-4                                  # Optional, defaults to gpt-4'
+      )
+    );
     console.error(chalk.gray('\nThen run:'));
     console.error(chalk.gray('  minicc'));
     console.error(chalk.gray('\nOr set permanently in your shell profile (~/.bashrc, ~/.zshrc):'));
@@ -45,7 +53,7 @@ export async function initializeAgent(options: AgentInitOptions = {}): Promise<I
     customPrompt = fs.readFileSync(promptFile, 'utf-8').trim();
     console.log(chalk.gray('✓ Loaded system prompt from .minicc/system_prompt.md'));
   }
-  
+
   // Initialize agent using SDK
   const agent = createAgent({
     model,
@@ -58,79 +66,24 @@ export async function initializeAgent(options: AgentInitOptions = {}): Promise<I
 
   // Determine session ID based on options
   let sessionId: string;
-  
+
   if (options.sessionId) {
     sessionId = options.sessionId;
   } else if (options.continue) {
-    sessionId = await getMostRecentSession(agent.sessionManager);
+    sessionId = await SessionHelper.getMostRecent(agent.sessionManager);
   } else if (options.resume) {
     if (typeof options.resume === 'string') {
       sessionId = options.resume;
     } else {
-      sessionId = await selectSessionInteractively(agent.sessionManager);
+      sessionId = await SessionHelper.selectInteractively(agent.sessionManager);
     }
   } else if (options.newSession) {
-    sessionId = uuidv4();
+    sessionId = SessionHelper.createNew();
   } else {
-    sessionId = await getOrCreateSession(agent.sessionManager);
+    sessionId = await SessionHelper.getOrCreateSession(agent.sessionManager);
   }
 
   return { agent, sessionManager: agent.sessionManager, sessionId };
-}
-
-async function getMostRecentSession(sessionManager: SessionManager): Promise<string> {
-  const sessions = await sessionManager.listSessions();
-  if (sessions.length === 0) {
-    return uuidv4();
-  }
-  return sessions[sessions.length - 1];
-}
-
-async function selectSessionInteractively(sessionManager: SessionManager): Promise<string> {
-  const sessions = await sessionManager.listSessions();
-  
-  if (sessions.length === 0) {
-    return uuidv4();
-  }
-
-  // For non-interactive mode, just return the most recent
-  if (process.stdout.isTTY !== true) {
-    return sessions[sessions.length - 1];
-  }
-
-  // This would require inquirer, but for print mode we'll keep it simple
-  return sessions[sessions.length - 1];
-}
-
-async function getOrCreateSession(sessionManager: SessionManager): Promise<string> {
-  const sessions = await sessionManager.listSessions();
-
-  if (sessions.length === 0) {
-    return uuidv4();
-  }
-
-  // For non-interactive mode, create new session
-  if (process.stdout.isTTY !== true) {
-    return uuidv4();
-  }
-
-  const inquirer = await import('inquirer');
-  const { choice } = await inquirer.default.prompt([
-    {
-      type: 'list',
-      name: 'choice',
-      message: 'Select session:',
-      choices: [
-        { name: 'Create new session', value: 'new' },
-        ...sessions.map((id: string) => ({
-          name: `Continue session: ${id}`,
-          value: id
-        }))
-      ]
-    }
-  ]);
-
-  return choice === 'new' ? uuidv4() : choice;
 }
 
 export function setupDebugMode(filter?: string) {

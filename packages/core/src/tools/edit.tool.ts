@@ -5,7 +5,7 @@ import * as path from 'path';
 export class FileEditTool extends BaseTool {
   name = 'file_edit';
   description = 'Edit file by replacing specific content';
-  
+
   parameters = {
     type: 'object',
     properties: {
@@ -14,7 +14,7 @@ export class FileEditTool extends BaseTool {
         description: 'Path to the file to edit'
       },
       oldContent: {
-        type: 'string', 
+        type: 'string',
         description: 'The exact content to replace (must match exactly)'
       },
       newContent: {
@@ -30,18 +30,18 @@ export class FileEditTool extends BaseTool {
     required: ['path', 'oldContent', 'newContent']
   };
 
-  async execute(args: { 
-    path: string; 
-    oldContent: string; 
+  async execute(args: {
+    path: string;
+    oldContent: string;
     newContent: string;
-    replaceAll?: boolean 
+    replaceAll?: boolean;
   }): Promise<ToolExecutionResult> {
     try {
       const absolutePath = path.resolve(args.path);
-      
+
       // Read the file
       const content = await fs.readFile(absolutePath, 'utf-8');
-      
+
       // Check if old content exists
       if (!content.includes(args.oldContent)) {
         return {
@@ -49,7 +49,7 @@ export class FileEditTool extends BaseTool {
           error: `Content to replace not found in file`
         };
       }
-      
+
       // Replace content
       let newFileContent: string;
       if (args.replaceAll) {
@@ -58,19 +58,19 @@ export class FileEditTool extends BaseTool {
       } else {
         // Replace only first occurrence
         const index = content.indexOf(args.oldContent);
-        newFileContent = 
-          content.substring(0, index) + 
-          args.newContent + 
+        newFileContent =
+          content.substring(0, index) +
+          args.newContent +
           content.substring(index + args.oldContent.length);
       }
-      
+
       // Write back to file
       await fs.writeFile(absolutePath, newFileContent);
-      
+
       // Count how many replacements were made
       const originalCount = content.split(args.oldContent).length - 1;
       const replacedCount = args.replaceAll ? originalCount : 1;
-      
+
       return {
         success: true,
         data: {
@@ -91,7 +91,7 @@ export class FileEditTool extends BaseTool {
 export class FileInsertTool extends BaseTool {
   name = 'file_insert';
   description = 'Insert content at a specific line in a file';
-  
+
   parameters = {
     type: 'object',
     properties: {
@@ -125,11 +125,11 @@ export class FileInsertTool extends BaseTool {
   }): Promise<ToolExecutionResult> {
     try {
       const absolutePath = path.resolve(args.path);
-      
+
       // Read file and split into lines
       const fileContent = await fs.readFile(absolutePath, 'utf-8');
       const lines = fileContent.split('\n');
-      
+
       // Validate line number
       if (args.line < 1 || args.line > lines.length + 1) {
         return {
@@ -137,18 +137,18 @@ export class FileInsertTool extends BaseTool {
           error: `Line number ${args.line} is out of range (1-${lines.length})`
         };
       }
-      
+
       // Insert content
       const position = args.position || 'after';
       const insertIndex = position === 'before' ? args.line - 1 : args.line;
-      
+
       // Split content by newlines if it contains multiple lines
       const contentLines = args.content.split('\n');
       lines.splice(insertIndex, 0, ...contentLines);
-      
+
       // Write back to file
       await fs.writeFile(absolutePath, lines.join('\n'));
-      
+
       return {
         success: true,
         data: {
@@ -170,7 +170,7 @@ export class FileInsertTool extends BaseTool {
 export class FileDeleteLinesTool extends BaseTool {
   name = 'file_delete_lines';
   description = 'Delete specific lines from a file';
-  
+
   parameters = {
     type: 'object',
     properties: {
@@ -184,7 +184,7 @@ export class FileDeleteLinesTool extends BaseTool {
       },
       endLine: {
         type: 'number',
-        description: 'Ending line number to delete (inclusive, optional)',
+        description: 'Ending line number to delete (inclusive, optional)'
       }
     },
     required: ['path', 'startLine']
@@ -197,13 +197,13 @@ export class FileDeleteLinesTool extends BaseTool {
   }): Promise<ToolExecutionResult> {
     try {
       const absolutePath = path.resolve(args.path);
-      
+
       // Read file and split into lines
       const fileContent = await fs.readFile(absolutePath, 'utf-8');
       const lines = fileContent.split('\n');
-      
+
       const endLine = args.endLine || args.startLine;
-      
+
       // Validate line numbers
       if (args.startLine < 1 || args.startLine > lines.length) {
         return {
@@ -211,20 +211,20 @@ export class FileDeleteLinesTool extends BaseTool {
           error: `Start line ${args.startLine} is out of range (1-${lines.length})`
         };
       }
-      
+
       if (endLine < args.startLine || endLine > lines.length) {
         return {
           success: false,
           error: `End line ${endLine} is invalid`
         };
       }
-      
+
       // Delete lines
       const deletedLines = lines.splice(args.startLine - 1, endLine - args.startLine + 1);
-      
+
       // Write back to file
       await fs.writeFile(absolutePath, lines.join('\n'));
-      
+
       return {
         success: true,
         data: {

@@ -14,7 +14,7 @@ export async function startInteractiveMode(options: any) {
   console.log(
     boxen(
       chalk.cyan.bold('MiniCC - AI Programming Assistant\n') +
-      chalk.gray('Type "exit" or "quit" to leave'),
+        chalk.gray('Type "exit" or "quit" to leave'),
       {
         padding: 1,
         margin: 1,
@@ -25,7 +25,7 @@ export async function startInteractiveMode(options: any) {
   );
 
   // Initialize services
-  const { agent, sessionManager, sessionId } = await initializeAgent({
+  const { agent, sessionId } = await initializeAgent({
     sessionId: options.sessionId,
     continue: options.continue,
     resume: options.resume,
@@ -35,12 +35,13 @@ export async function startInteractiveMode(options: any) {
   console.log(chalk.green(`\n✨ Session started (ID: ${sessionId})\n`));
 
   // Main loop
-  while (true) {
+  let running = true;
+  while (running) {
     const userInput = await input({
       message: '',
       theme: {
         style: {
-          message: () => '',
+          message: () => ''
         },
         prefix: '❯'
       }
@@ -49,7 +50,8 @@ export async function startInteractiveMode(options: any) {
     // Handle exit commands
     if (userInput.toLowerCase() === 'exit' || userInput.toLowerCase() === 'quit') {
       console.log(chalk.yellow('\n👋 Goodbye!\n'));
-      process.exit(0);
+      running = false;
+      break;
     }
 
     if (!userInput.trim()) {
@@ -65,7 +67,7 @@ export async function startInteractiveMode(options: any) {
     try {
       const response = await agent.chat(sessionId, userInput);
       spinner.succeed('Done');
-      
+
       // Display answer
       console.log(chalk.white(response.trim()) + '\n');
     } catch (error: any) {
@@ -74,9 +76,3 @@ export async function startInteractiveMode(options: any) {
     }
   }
 }
-
-
-
-
-
-

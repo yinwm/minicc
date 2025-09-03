@@ -8,20 +8,24 @@ import { listSessionsCommand } from './commands/sessions';
 
 const program = new Command();
 
-program
-  .name('minicc')
-  .description('MiniCC - Minimal Claude Code CLI')
-  .version('0.2.1');
+program.name('minicc').description('MiniCC - Minimal Claude Code CLI').version('0.2.1');
 
 // Main command - handle interactive mode and single argument
 program
   .argument('[prompt]', 'Prompt to process')
   .option('-c, --continue', 'Continue the most recent conversation')
-  .option('-r, --resume [sessionId]', 'Resume a conversation - provide a session ID or interactively select')
+  .option(
+    '-r, --resume [sessionId]',
+    'Resume a conversation - provide a session ID or interactively select'
+  )
   .option('--session-id <id>', 'Use a specific session ID for the conversation')
   .option('--new-session', 'Force create a new session')
   .option('-p, --print', 'Print response and exit (useful for pipes)')
-  .option('--output-format <format>', 'Output format (only works with --print): "text" (default), "json"', 'text')
+  .option(
+    '--output-format <format>',
+    'Output format (only works with --print): "text" (default), "json"',
+    'text'
+  )
   .option('--debug [filter]', 'Enable debug mode with optional category filtering')
   .option('--verbose', 'Override verbose mode setting from config')
   .action(async (prompt, options) => {

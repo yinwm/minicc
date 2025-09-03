@@ -28,8 +28,4 @@ export {
 } from './tools';
 
 // Re-export some core classes for advanced usage
-export {
-  ChatService,
-  SessionManager,
-  LLMClient
-} from '@minicc/core';
+export { ChatService, SessionManager, LLMClient } from '@minicc/core';

@@ -19,14 +19,14 @@ export class ChatService {
   private toolRegistry: ToolRegistry;
   public sessionManager: SessionManager;
   private model: string;
-  
+
   constructor(config: ChatServiceConfig) {
     this.llmClient = config.llmClient;
     this.toolRegistry = config.toolRegistry;
     this.sessionManager = config.sessionManager;
     this.model = config.model || 'gpt-4';
     this.systemPrompt = config.systemPrompt || this.getDefaultSystemPrompt();
-    
+
     this.openai = this.llmClient.getClient();
   }
 
@@ -82,16 +82,16 @@ Remember to use the available tools effectively to help users with your programm
       return await this.processConversation(session, this.systemPrompt);
     } catch (error: any) {
       console.error('Chat service error:', error);
-      
+
       const errorMsg: Message = {
         role: 'assistant',
         content: `Sorry, an error occurred while processing your request: ${error.message}\nPlease try again later.`,
         timestamp: new Date()
       };
       session.messages.push(errorMsg);
-      
+
       await this.sessionManager.saveSession(session);
-      
+
       throw error;
     }
   }
@@ -101,7 +101,7 @@ Remember to use the available tools effectively to help users with your programm
     const messages: OpenAI.ChatCompletionMessageParam[] = [
       { role: 'system', content: systemPrompt }
     ];
-    
+
     // Add all session messages
     for (const msg of session.messages) {
       if (msg.role === 'user') {
@@ -157,7 +157,7 @@ Remember to use the available tools effectively to help users with your programm
       // Execute each tool
       for (const toolCall of response.tool_calls) {
         const tool = this.toolRegistry.getTool(toolCall.function.name);
-        
+
         let result;
         if (!tool) {
           result = {
@@ -193,14 +193,14 @@ Remember to use the available tools effectively to help users with your programm
     } else {
       // No tool calls, return final response
       const assistantResponse = response.content || '';
-      
+
       const assistantMsg: Message = {
         role: 'assistant',
         content: assistantResponse,
         timestamp: new Date()
       };
       session.messages.push(assistantMsg);
-      
+
       await this.sessionManager.saveSession(session);
       return assistantResponse;
     }

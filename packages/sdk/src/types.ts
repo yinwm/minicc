@@ -1,9 +1,5 @@
 // Re-export core types that SDK users need
-export type { 
-  Message, 
-  Session, 
-  ToolExecutionResult 
-} from '@minicc/core';
+export type { Message, Session, ToolExecutionResult } from '@minicc/core';
 
 // SDK-specific configuration types
 export interface OpenAIConfig {

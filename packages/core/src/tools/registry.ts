@@ -13,7 +13,7 @@ export class ToolRegistry {
 
   constructor(options: ToolRegistryOptions = {}) {
     const { autoRegisterBuiltin = true } = options;
-    
+
     if (autoRegisterBuiltin) {
       this.registerBuiltinTools();
     }
@@ -24,12 +24,12 @@ export class ToolRegistry {
     this.register(new FileReadTool());
     this.register(new FileWriteTool());
     this.register(new FileListTool());
-    
+
     // File editing tools
     this.register(new FileEditTool());
     this.register(new FileInsertTool());
     this.register(new FileDeleteLinesTool());
-    
+
     // Other tools
     this.register(new ShellTool());
     this.register(new SearchTool());

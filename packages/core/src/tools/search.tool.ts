@@ -5,7 +5,7 @@ import * as path from 'path';
 export class SearchTool extends BaseTool {
   name = 'code_search';
   description = 'Search for patterns in code files';
-  
+
   parameters = {
     type: 'object',
     properties: {
@@ -93,7 +93,7 @@ export class SearchTool extends BaseTool {
           await this.searchInDirectory(fullPath, pattern, extensions, results, maxResults);
         } else if (entry.isFile()) {
           const ext = path.extname(entry.name).slice(1);
-          
+
           if (extensions.length === 0 || extensions.includes(ext)) {
             await this.searchInFile(fullPath, pattern, results, maxResults);
           }
@@ -116,10 +116,10 @@ export class SearchTool extends BaseTool {
 
       for (let i = 0; i < lines.length && results.length < maxResults; i++) {
         const matches = lines[i].matchAll(pattern);
-        
-        for (const match of matches) {
+
+        for (const _match of matches) {
           if (results.length >= maxResults) break;
-          
+
           results.push({
             file: filePath,
             line: i + 1,

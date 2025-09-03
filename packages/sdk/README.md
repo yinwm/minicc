@@ -17,7 +17,7 @@ import { createAgent, BaseTool } from '@minicc/sdk';
 class SqlQueryTool extends BaseTool {
   name = 'sql_query';
   description = 'Execute SQL queries';
-  
+
   parameters = {
     type: 'object',
     properties: {
@@ -110,7 +110,7 @@ Extend `BaseTool` to create custom tools:
 class MyTool extends BaseTool {
   name = 'my_tool';
   description = 'My custom tool';
-  
+
   parameters = {
     type: 'object',
     properties: {
@@ -143,7 +143,7 @@ const response = await agent.chat('session-1', 'List files in current directory'
 ```typescript
 const agent = createAgent({
   tools: [new MyCustomTool()],
-  autoRegisterBuiltins: false,  // No built-in tools
+  autoRegisterBuiltins: false, // No built-in tools
   openaiConfig: { apiKey: 'your-key' }
 });
 ```

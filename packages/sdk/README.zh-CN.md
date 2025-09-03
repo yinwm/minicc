@@ -17,7 +17,7 @@ import { createAgent, BaseTool } from '@minicc/sdk';
 class SqlQueryTool extends BaseTool {
   name = 'sql_query';
   description = '执行 SQL 查询';
-  
+
   parameters = {
     type: 'object',
     properties: {
@@ -110,7 +110,7 @@ const agent = createAgent({
 class MyTool extends BaseTool {
   name = 'my_tool';
   description = '我的自定义工具';
-  
+
   parameters = {
     type: 'object',
     properties: {
@@ -143,7 +143,7 @@ const response = await agent.chat('session-1', '列出当前目录的文件');
 ```typescript
 const agent = createAgent({
   tools: [new MyCustomTool()],
-  autoRegisterBuiltins: false,  // 不使用内置工具
+  autoRegisterBuiltins: false, // 不使用内置工具
   openaiConfig: { apiKey: 'your-key' }
 });
 ```

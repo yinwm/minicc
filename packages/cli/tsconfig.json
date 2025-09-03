@@ -1,24 +1,19 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "commonjs",
-    "lib": ["ES2022"],
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,
-    "sourceMap": true,
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true
+    "baseUrl": "../../",
+    "paths": {
+      "@minicc/core": ["packages/core/src"],
+      "@minicc/core/*": ["packages/core/src/*"],
+      "@minicc/sdk": ["packages/sdk/src"],
+      "@minicc/sdk/*": ["packages/sdk/src/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"],
-  "references": [
-    { "path": "../sdk" }
-  ],
+  "references": [{ "path": "../sdk" }],
   "typeRoots": ["./src/types", "./node_modules/@types"]
 }

@@ -1,6 +1,5 @@
 import chalk from 'chalk';
 import ora from 'ora';
-import { v4 as uuidv4 } from 'uuid';
 import { initializeAgent, setupDebugMode } from '../utils/agent-factory';
 
 export async function printCommand(prompt: string, options: any) {
@@ -25,18 +24,18 @@ export async function printCommand(prompt: string, options: any) {
 
   try {
     // Initialize services
-    const { agent, sessionManager, sessionId } = await initializeAgent({
+    const { agent, sessionId } = await initializeAgent({
       sessionId: options.sessionId,
       continue: options.continue,
       resume: options.resume,
       newSession: options.newSession
     });
-    
+
     spinner.text = 'Processing...';
 
     // Execute query
     const response = await agent.chat(sessionId, prompt);
-    
+
     spinner.succeed('Done');
 
     // Format and output result
@@ -48,24 +47,20 @@ export async function printCommand(prompt: string, options: any) {
 
     // Exit after printing
     process.exit(0);
-
   } catch (error: any) {
     spinner.fail('Failed');
-    
+
     if (options.outputFormat === 'json') {
       outputError(error);
     } else {
       console.error(chalk.red('Error:'), error.message);
     }
-    
+
     process.exit(1);
   }
 }
 
-
-
-
-function outputText(response: string, sessionId: string) {
+function outputText(response: string, _sessionId: string) {
   console.log(response);
 }
 
@@ -73,12 +68,12 @@ function outputJson(response: string, sessionId: string) {
   const output = {
     success: true,
     data: {
-      content: response,
+      content: response
     },
     metadata: {
       session_id: sessionId,
       tokens_used: 0, // TODO: Get actual token count
-      duration_ms: 0, // TODO: Get actual duration
+      duration_ms: 0 // TODO: Get actual duration
     }
   };
 
@@ -99,4 +94,3 @@ function outputError(error: any) {
 
   console.log(JSON.stringify(output, null, 2));
 }
-

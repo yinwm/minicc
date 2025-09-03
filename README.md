@@ -9,7 +9,7 @@ MiniCC (Minimal Claude Code) is an educational AI code assistant, similar to wha
 ## Features
 
 - 🛠️ **Tool System**: Extensible tool architecture supporting file operations, command execution, code search
-- 🤖 **LLM Integration**: Supports OpenAI API compatible large language models  
+- 🤖 **LLM Integration**: Supports OpenAI API compatible large language models
 - 📝 **Session Management**: Maintains context for multi-turn conversations
 - 🔄 **Recursive Execution**: AI autonomously completes multi-step tasks
 - 🎯 **Customizable System Prompt**: Easily modify AI behavior via `.minicc/system_prompt.md`
@@ -41,21 +41,21 @@ The core innovation is the recursive tool execution that allows AI to complete m
 flowchart TD
     Start([User Input]) --> AddMsg[Add User Message to Session]
     AddMsg --> Process[processConversation]
-    
+
     Process --> BuildPrompt[Build Messages Array<br/>System + History + User]
     BuildPrompt --> CallAPI[Call LLM API<br/>with Tools Definitions]
-    
+
     CallAPI --> CheckTools{AI Response<br/>Has Tool Calls?}
-    
+
     CheckTools -->|Yes| SaveTools[Save AI Tool Request<br/>to Session]
     SaveTools --> ExecuteTools[Execute Each Tool]
     ExecuteTools --> SaveResults[Save Tool Results<br/>to Session]
     SaveResults --> Recurse[Recursively Call<br/>processConversation]
     Recurse --> Process
-    
+
     CheckTools -->|No| SaveResponse[Save AI Text Response<br/>to Session]
     SaveResponse --> Return([Return Final Answer])
-    
+
     style Start fill:#e1f5e1
     style Return fill:#e1f5e1
     style Recurse fill:#ffe1e1
@@ -124,16 +124,19 @@ pnpm sessions --list
 ## Core Tools
 
 ### File Operations
+
 - `file_read`: Read file contents
 - `file_write`: Write entire file
 - `file_list`: List directory files
 
 ### File Editing
+
 - `file_edit`: Find and replace content
 - `file_insert`: Insert at specific line
 - `file_delete_lines`: Delete line ranges
 
 ### Execution
+
 - `shell_execute`: Execute system commands
 - `code_search`: Search patterns in code
 
@@ -159,7 +162,7 @@ import { BaseTool, ToolExecutionResult } from './base.tool';
 export class MyTool extends BaseTool {
   name = 'my_tool';
   description = 'My custom tool';
-  
+
   parameters = {
     type: 'object',
     properties: {
@@ -167,7 +170,7 @@ export class MyTool extends BaseTool {
     },
     required: ['input']
   };
-  
+
   async execute(args: any): Promise<ToolExecutionResult> {
     // Implement your logic
     return { success: true, data: 'result' };
@@ -253,7 +256,7 @@ import { createAgent, BaseTool } from '@minicc/sdk';
 class SqlQueryTool extends BaseTool {
   name = 'sql_query';
   description = 'Execute SQL queries';
-  
+
   parameters = {
     type: 'object',
     properties: { query: { type: 'string' } },
@@ -303,6 +306,7 @@ A: MiniCC is designed for learning. For production, use official Claude Code or 
 ## Contributing
 
 Contributions welcome! Focus on:
+
 - Clear, educational code
 - Tool extensions
 - Documentation improvements
