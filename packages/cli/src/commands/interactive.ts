@@ -2,7 +2,6 @@ import input from '@inquirer/input';
 import chalk from 'chalk';
 import ora from 'ora';
 import boxen from 'boxen';
-import { SessionManager } from '@minicc/sdk';
 import { initializeAgent, setupDebugMode } from '../utils/agent-factory';
 
 export async function startInteractiveMode(options: any) {
@@ -15,8 +14,7 @@ export async function startInteractiveMode(options: any) {
   console.log(
     boxen(
       chalk.cyan.bold('MiniCC - AI Programming Assistant\n') +
-      chalk.gray('Type "exit" or "quit" to leave\n') +
-      chalk.gray('Type "help" for help'),
+      chalk.gray('Type "exit" or "quit" to leave'),
       {
         padding: 1,
         margin: 1,
@@ -48,25 +46,10 @@ export async function startInteractiveMode(options: any) {
       }
     });
 
-    // Handle special commands
+    // Handle exit commands
     if (userInput.toLowerCase() === 'exit' || userInput.toLowerCase() === 'quit') {
       console.log(chalk.yellow('\n👋 Goodbye!\n'));
       process.exit(0);
-    }
-
-    if (userInput.toLowerCase() === 'help') {
-      showHelp();
-      continue;
-    }
-
-    if (userInput.toLowerCase() === 'clear') {
-      console.clear();
-      continue;
-    }
-
-    if (userInput.toLowerCase() === 'history') {
-      await showHistory(sessionManager, sessionId);
-      continue;
     }
 
     if (!userInput.trim()) {
@@ -97,44 +80,3 @@ export async function startInteractiveMode(options: any) {
 
 
 
-function showHelp() {
-  console.log(
-    boxen(
-      chalk.yellow('Available Commands:\n\n') +
-      chalk.white('help     - Show this help message\n') +
-      chalk.white('clear    - Clear screen\n') +
-      chalk.white('history  - Show current session history\n') +
-      chalk.white('exit     - Exit program\n\n') +
-      chalk.yellow('Example Usage:\n\n') +
-      chalk.gray('• List all files in current directory\n') +
-      chalk.gray('• Read the content of README.md\n') +
-      chalk.gray('• Search for "function" in all .ts files\n') +
-      chalk.gray('• Execute "npm test" command'),
-      {
-        padding: 1,
-        borderStyle: 'double',
-        borderColor: 'yellow'
-      }
-    )
-  );
-}
-
-async function showHistory(sessionManager: SessionManager, sessionId: string) {
-  const session = await sessionManager.getSession(sessionId);
-  if (!session) {
-    console.log(chalk.yellow('No session history found'));
-    return;
-  }
-
-  console.log(chalk.cyan('\n=== Session History ===\n'));
-  
-  session.messages.forEach((msg: any) => {
-    if (msg.role === 'user') {
-      console.log(chalk.blue('User:'), msg.content);
-    } else if (msg.role === 'assistant' && msg.content) {
-      console.log(chalk.green('Assistant:'), msg.content);
-    }
-  });
-  
-  console.log(chalk.cyan('\n===============\n'));
-}
