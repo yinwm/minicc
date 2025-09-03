@@ -1,13 +1,16 @@
-import inquirer from 'inquirer';
+import input from '@inquirer/input';
 import chalk from 'chalk';
 import ora from 'ora';
 import boxen from 'boxen';
-import { ChatService, SessionManager, LLMClient, ToolRegistry } from '@minicc/core';
-import { v4 as uuidv4 } from 'uuid';
-import * as fs from 'fs';
-import * as path from 'path';
+import { SessionManager } from '@minicc/sdk';
+import { initializeAgent, setupDebugMode } from '../utils/agent-factory';
 
 export async function startInteractiveMode(options: any) {
+  // Setup debug mode if enabled
+  if (options.debug) {
+    setupDebugMode(options.debug);
+  }
+
   // Display welcome message
   console.log(
     boxen(
@@ -24,44 +27,49 @@ export async function startInteractiveMode(options: any) {
   );
 
   // Initialize services
-  const sessionId = options.session || (options.new ? uuidv4() : await getOrCreateSession());
-  const { chatService, sessionManager } = await initServices();
+  const { agent, sessionManager, sessionId } = await initializeAgent({
+    sessionId: options.sessionId,
+    continue: options.continue,
+    resume: options.resume,
+    newSession: options.newSession
+  });
 
   console.log(chalk.green(`\n✨ Session started (ID: ${sessionId})\n`));
 
   // Main loop
   while (true) {
-    const { question } = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'question',
-        message: chalk.cyan('Your question:'),
+    const userInput = await input({
+      message: '',
+      theme: {
+        style: {
+          message: () => '',
+        },
         prefix: '❯'
       }
-    ]);
+    });
 
     // Handle special commands
-    if (question.toLowerCase() === 'exit' || question.toLowerCase() === 'quit') {
+    if (userInput.toLowerCase() === 'exit' || userInput.toLowerCase() === 'quit') {
       console.log(chalk.yellow('\n👋 Goodbye!\n'));
       process.exit(0);
     }
 
-    if (question.toLowerCase() === 'help') {
+    if (userInput.toLowerCase() === 'help') {
       showHelp();
       continue;
     }
 
-    if (question.toLowerCase() === 'clear') {
+    if (userInput.toLowerCase() === 'clear') {
       console.clear();
       continue;
     }
 
-    if (question.toLowerCase() === 'history') {
+    if (userInput.toLowerCase() === 'history') {
       await showHistory(sessionManager, sessionId);
       continue;
     }
 
-    if (!question.trim()) {
+    if (!userInput.trim()) {
       continue;
     }
 
@@ -72,18 +80,11 @@ export async function startInteractiveMode(options: any) {
     }).start();
 
     try {
-      const response = await chatService.chat(sessionId, question);
+      const response = await agent.chat(sessionId, userInput);
       spinner.succeed('Done');
       
       // Display answer
-      console.log('\n' + boxen(
-        chalk.white(response),
-        {
-          padding: 1,
-          borderStyle: 'single',
-          borderColor: 'green'
-        }
-      ) + '\n');
+      console.log(chalk.white(response.trim()) + '\n');
     } catch (error: any) {
       spinner.fail('Failed');
       console.error(chalk.red('\nError:'), error.message, '\n');
@@ -91,62 +92,10 @@ export async function startInteractiveMode(options: any) {
   }
 }
 
-async function initServices() {
-  // Check environment variables
-  const apiKey = process.env.OPENAI_API_KEY || process.env.SILICONFLOW_API_KEY;
-  const baseURL = process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1';
-  const model = process.env.MODEL || 'gpt-4';
 
-  if (!apiKey) {
-    console.error(chalk.red('Error: Please set OPENAI_API_KEY environment variable'));
-    process.exit(1);
-  }
 
-  // Load custom system prompt if available
-  let customPrompt: string | undefined;
-  
-  // Check for .minicc/system_prompt.md file
-  const promptFile = path.resolve('.minicc/system_prompt.md');
-  if (fs.existsSync(promptFile)) {
-    customPrompt = fs.readFileSync(promptFile, 'utf-8').trim();
-    console.log(chalk.gray('✓ Loaded system prompt from .minicc/system_prompt.md'));
-  }
-  
-  // Initialize services
-  const llmClient = new LLMClient({ apiKey, baseURL, model });
-  const toolRegistry = new ToolRegistry();
-  const sessionManager = new SessionManager('.history');
-  const chatService = new ChatService(llmClient, toolRegistry, sessionManager, model, customPrompt);
 
-  return { chatService, sessionManager };
-}
 
-async function getOrCreateSession(): Promise<string> {
-  const sessionManager = new SessionManager('.history');
-  const sessions = await sessionManager.listSessions();
-
-  if (sessions.length === 0) {
-    return uuidv4();
-  }
-
-  // 让用户选择继续之前的会话或创建新会话
-  const { choice } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'choice',
-      message: 'Select session:',
-      choices: [
-        { name: 'Create new session', value: 'new' },
-        ...sessions.map((id: string) => ({
-          name: `Continue session: ${id}`,
-          value: id
-        }))
-      ]
-    }
-  ]);
-
-  return choice === 'new' ? uuidv4() : choice;
-}
 
 function showHelp() {
   console.log(

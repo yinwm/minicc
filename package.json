@@ -1,17 +1,22 @@
 {
   "name": "@minicc/monorepo",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "private": true,
   "description": "MiniCC - A minimal Claude Code implementation for learning",
   "scripts": {
     "dev": "pnpm -r --parallel run dev",
-    "build": "pnpm -r run build",
+    "build": "find . -name 'tsconfig.tsbuildinfo' -delete && pnpm --filter @minicc/core build && pnpm --filter @minicc/sdk build && pnpm --filter @minicc/cli build",
     "clean": "pnpm -r run clean && rm -rf node_modules",
     "lint": "eslint . --ext .ts,.tsx",
     "type-check": "pnpm -r run type-check",
-    "minicc": "node packages/cli/dist/index.js",
-    "chat": "node packages/cli/dist/index.js chat",
-    "agent": "node packages/cli/dist/index.js agent"
+    "minicc": "npx tsx packages/cli/src/index.ts",
+    "chat": "npx tsx packages/cli/src/index.ts",
+    "query": "npx tsx packages/cli/src/index.ts -p",
+    "sessions": "npx tsx packages/cli/src/index.ts sessions --list",
+    "minicc:prod": "node packages/cli/dist/index.js",
+    "chat:prod": "node packages/cli/dist/index.js",
+    "query:prod": "node packages/cli/dist/index.js -p",
+    "sessions:prod": "node packages/cli/dist/index.js sessions --list"
   },
   "keywords": ["claude-code", "agent", "ai-assistant", "learning", "education"],
   "author": "",

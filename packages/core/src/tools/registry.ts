@@ -4,14 +4,22 @@ import { FileEditTool, FileInsertTool, FileDeleteLinesTool } from './edit.tool';
 import { ShellTool } from './shell.tool';
 import { SearchTool } from './search.tool';
 
+export interface ToolRegistryOptions {
+  autoRegisterBuiltin?: boolean;
+}
+
 export class ToolRegistry {
   private tools: Map<string, BaseTool> = new Map();
 
-  constructor() {
-    this.registerBuiltinTools();
+  constructor(options: ToolRegistryOptions = {}) {
+    const { autoRegisterBuiltin = true } = options;
+    
+    if (autoRegisterBuiltin) {
+      this.registerBuiltinTools();
+    }
   }
 
-  private registerBuiltinTools() {
+  public registerBuiltinTools() {
     // File operation tools
     this.register(new FileReadTool());
     this.register(new FileWriteTool());

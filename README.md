@@ -24,6 +24,8 @@ minicc/
 │   │   ├── llm/       # LLM client
 │   │   ├── tools/     # Tool implementations
 │   │   └── services/  # Business services
+│   ├── sdk/           # Software Development Kit
+│   │   └── src/       # SDK API for building agents
 │   └── cli/           # Command line interface
 │       └── commands/  # CLI commands
 ├── .minicc/           # Configuration
@@ -84,12 +86,20 @@ pnpm install
 
 ### 3. Configure environment
 
-Create a `.env` file in the project root:
+Set environment variables:
 
-```env
-OPENAI_API_KEY=your-api-key-here
-OPENAI_BASE_URL=https://api.openai.com/v1  # Or other compatible API
-MODEL=gpt-4  # Or other model
+```bash
+# Temporary (current session)
+export OPENAI_API_KEY=your-api-key-here
+export OPENAI_BASE_URL=https://api.openai.com/v1  # Or other compatible API
+export MODEL=gpt-4  # Or other model
+
+# Or run directly
+OPENAI_API_KEY=your-api-key-here OPENAI_BASE_URL=https://api.openai.com/v1 pnpm chat
+
+# Permanent (add to ~/.bashrc or ~/.zshrc)
+echo 'export OPENAI_API_KEY=your-api-key-here' >> ~/.bashrc
+echo 'export OPENAI_BASE_URL=https://api.openai.com/v1' >> ~/.bashrc
 ```
 
 ### 4. Build project
@@ -212,12 +222,69 @@ pnpm sessions # Manage sessions
 pnpm clean    # Clean build artifacts
 ```
 
+## Usage Options
+
+### Option 1: CLI Tool
+
+Install globally and use as a command-line tool:
+
+```bash
+# Install CLI
+npm install -g @minicc/cli
+
+# Use commands
+minicc chat
+minicc query "List all files"
+minicc sessions --list
+```
+
+### Option 2: SDK for Building Agents
+
+Install SDK and integrate into your applications:
+
+```bash
+# Install SDK
+npm install @minicc/sdk
+```
+
+```typescript
+import { createAgent, BaseTool } from '@minicc/sdk';
+
+class SqlQueryTool extends BaseTool {
+  name = 'sql_query';
+  description = 'Execute SQL queries';
+  
+  parameters = {
+    type: 'object',
+    properties: { query: { type: 'string' } },
+    required: ['query']
+  };
+
+  async execute(args: any) {
+    // Your business logic
+    return { success: true, data: 'Results...' };
+  }
+}
+
+const agent = createAgent({
+  model: 'gpt-4',
+  systemPrompt: 'You are a helpful assistant',
+  tools: [new SqlQueryTool()],
+  openaiConfig: {
+    apiKey: process.env.OPENAI_API_KEY
+  }
+});
+
+const response = await agent.chat('session-1', 'Query all users');
+```
+
 ## Learning Resources
 
 - **Tool System**: See `packages/core/src/tools/` for tool implementations
 - **LLM Integration**: Check `packages/core/src/llm/` for API integration
 - **Session Management**: Review `packages/core/src/services/session.service.ts`
 - **CLI Structure**: Explore `packages/cli/src/commands/` for CLI implementation
+- **SDK Usage**: Check `packages/sdk/README.md` for SDK documentation
 
 ## FAQ
 

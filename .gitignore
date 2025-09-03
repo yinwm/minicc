@@ -9,6 +9,14 @@ build/
 *.tsbuildinfo
 out/
 
+# TypeScript compiled files
+*.js
+*.js.map
+*.d.ts
+!*.config.js
+!jest.config.js
+!webpack.config.js
+
 # Environment variables
 .env
 .env.local

@@ -15,14 +15,14 @@ export class SessionManager {
     try {
       await fs.mkdir(this.historyDir, { recursive: true });
     } catch (error) {
-      console.error('创建历史记录目录失败:', error);
+      console.error('Failed to create history directory:', error);
     }
   }
 
   async createSession(id: string, name?: string): Promise<Session> {
     const session: Session = {
       id,
-      name: name || `会话_${id}`,
+      name: name || `Session_${id}`,
       startTime: new Date(),
       lastUpdateTime: new Date(),
       messages: [],
@@ -71,9 +71,9 @@ export class SessionManager {
       const filePath = this.getSessionFilePath(session.id);
       const data = JSON.stringify(session, null, 2);
       await fs.writeFile(filePath, data, 'utf-8');
-      console.log(`💾 会话已保存: ${session.id}`);
+      console.log(`💾 Session saved: ${session.id}`);
     } catch (error) {
-      console.error('保存会话失败:', error);
+      console.error('Failed to save session:', error);
       throw error;
     }
   }
@@ -85,7 +85,7 @@ export class SessionManager {
         .filter(file => file.endsWith('.json'))
         .map(file => file.replace('.json', ''));
     } catch (error) {
-      console.error('列出会话失败:', error);
+      console.error('Failed to list sessions:', error);
       return [];
     }
   }
@@ -110,7 +110,7 @@ export class SessionManager {
       
       return sessions;
     } catch (error) {
-      console.error('列出会话详情失败:', error);
+      console.error('Failed to list session details:', error);
       return [];
     }
   }
@@ -121,9 +121,9 @@ export class SessionManager {
     try {
       const filePath = this.getSessionFilePath(id);
       await fs.unlink(filePath);
-      console.log(`🗑️ 会话已删除: ${id}`);
+      console.log(`🗑️ Session deleted: ${id}`);
     } catch (error) {
-      console.error('删除会话失败:', error);
+      console.error('Failed to delete session:', error);
     }
   }
 
@@ -137,9 +137,9 @@ export class SessionManager {
           await fs.unlink(path.join(this.historyDir, file));
         }
       }
-      console.log('🗑️ 所有会话已清除');
+      console.log('🗑️ All sessions cleared');
     } catch (error) {
-      console.error('清除会话失败:', error);
+      console.error('Failed to clear sessions:', error);
     }
   }
 

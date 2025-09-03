@@ -1,0 +1,35 @@
+{
+  "name": "@minicc/sdk",
+  "version": "0.2.1",
+  "description": "MiniCC SDK - Software Development Kit for building AI agents",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "clean": "rimraf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": ["ai", "agent", "sdk", "claude-code", "minicc", "programming-assistant"],
+  "author": "",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@minicc/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "rimraf": "^5.0.5",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}

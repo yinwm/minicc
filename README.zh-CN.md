@@ -84,12 +84,20 @@ pnpm install
 
 ### 3. 配置环境
 
-在项目根目录创建 `.env` 文件：
+设置环境变量：
 
-```env
-OPENAI_API_KEY=your-api-key-here
-OPENAI_BASE_URL=https://api.openai.com/v1  # 或其他兼容 API
-MODEL=gpt-4  # 或其他模型
+```bash
+# 临时设置（当前会话）
+export OPENAI_API_KEY=your-api-key-here
+export OPENAI_BASE_URL=https://api.openai.com/v1  # 或其他兼容 API
+export MODEL=gpt-4  # 或其他模型
+
+# 或直接运行
+OPENAI_API_KEY=your-api-key-here OPENAI_BASE_URL=https://api.openai.com/v1 pnpm chat
+
+# 永久设置（添加到 ~/.bashrc 或 ~/.zshrc）
+echo 'export OPENAI_API_KEY=your-api-key-here' >> ~/.bashrc
+echo 'export OPENAI_BASE_URL=https://api.openai.com/v1' >> ~/.bashrc
 ```
 
 ### 4. 构建项目

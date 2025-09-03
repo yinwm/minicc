@@ -3,21 +3,23 @@
     "target": "ES2022",
     "module": "commonjs",
     "lib": ["ES2022"],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "declarationMap": true,
     "sourceMap": true,
+    "composite": true,
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "baseUrl": ".",
-    "paths": {
-      "@minicc/core": ["packages/core/src"],
-      "@minicc/core/*": ["packages/core/src/*"]
-    }
+    "allowSyntheticDefaultImports": true
   },
-  "exclude": ["node_modules", "dist", "build", "*.config.js"]
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules"],
+  "references": [
+    { "path": "../core" }
+  ]
 }

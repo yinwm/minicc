@@ -4,19 +4,47 @@ import { ToolRegistry } from '../tools/registry';
 import { Message, Session } from '../types';
 import { SessionManager } from './session.service';
 
+export interface ChatServiceConfig {
+  llmClient: LLMClient;
+  toolRegistry: ToolRegistry;
+  sessionManager: SessionManager;
+  model?: string;
+  systemPrompt?: string;
+}
+
 export class ChatService {
   private openai: OpenAI;
   private systemPrompt: string;
+  private llmClient: LLMClient;
+  private toolRegistry: ToolRegistry;
+  public sessionManager: SessionManager;
+  private model: string;
   
-  constructor(
-    private llmClient: LLMClient,
-    private toolRegistry: ToolRegistry,
-    private sessionManager: SessionManager,
-    private model: string = 'gpt-4',
-    systemPrompt?: string
-  ) {
+  constructor(config: ChatServiceConfig) {
+    this.llmClient = config.llmClient;
+    this.toolRegistry = config.toolRegistry;
+    this.sessionManager = config.sessionManager;
+    this.model = config.model || 'gpt-4';
+    this.systemPrompt = config.systemPrompt || this.getDefaultSystemPrompt();
+    
     this.openai = this.llmClient.getClient();
-    this.systemPrompt = systemPrompt || this.getDefaultSystemPrompt();
+  }
+
+  // Legacy constructor for backward compatibility
+  static create(
+    llmClient: LLMClient,
+    toolRegistry: ToolRegistry,
+    sessionManager: SessionManager,
+    model: string = 'gpt-4',
+    systemPrompt?: string
+  ): ChatService {
+    return new ChatService({
+      llmClient,
+      toolRegistry,
+      sessionManager,
+      model,
+      systemPrompt
+    });
   }
 
   // Get default system prompt

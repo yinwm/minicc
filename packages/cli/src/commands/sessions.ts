@@ -1,19 +1,15 @@
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { SessionManager } from '@minicc/core';
+import { SessionManager } from '@minicc/sdk';
 
 export async function listSessionsCommand(options: any) {
   const sessionManager = new SessionManager('.history');
 
   if (options.list) {
     await listSessions(sessionManager);
-  } else if (options.delete) {
-    await deleteSession(sessionManager, options.delete);
-  } else if (options.clear) {
-    await clearAllSessions(sessionManager);
   } else {
-    // 交互式会话管理
-    await interactiveSessionManagement(sessionManager);
+    // Default to list when no other option is provided
+    await listSessions(sessionManager);
   }
 }
 
@@ -21,20 +17,20 @@ async function listSessions(sessionManager: SessionManager) {
   const sessions = await sessionManager.listSessions();
   
   if (sessions.length === 0) {
-    console.log(chalk.yellow('没有找到历史会话'));
+    console.log(chalk.yellow('No sessions found'));
     return;
   }
 
-  console.log(chalk.cyan('\n=== 历史会话 ===\n'));
+  console.log(chalk.cyan('\n=== Session History ===\n'));
   
   for (const id of sessions) {
     const summary = await sessionManager.getSessionSummary(id);
     if (summary) {
       console.log(chalk.green(`• ${id}`));
-      console.log(chalk.gray(`  开始时间: ${summary.startTime.toLocaleString()}`));
-      console.log(chalk.gray(`  消息数量: ${summary.messageCount}`));
+      console.log(chalk.gray(`  Start time: ${summary.startTime.toLocaleString()}`));
+      console.log(chalk.gray(`  Message count: ${summary.messageCount}`));
       if (summary.lastMessage) {
-        console.log(chalk.gray(`  最后消息: ${summary.lastMessage}...`));
+        console.log(chalk.gray(`  Last message: ${summary.lastMessage}...`));
       }
       console.log();
     }
@@ -46,7 +42,7 @@ async function deleteSession(sessionManager: SessionManager, id: string) {
     {
       type: 'confirm',
       name: 'confirm',
-      message: `确定要删除会话 ${id} 吗？`,
+      message: `Are you sure you want to delete session ${id}?`,
       default: false
     }
   ]);
@@ -77,7 +73,7 @@ async function interactiveSessionManagement(sessionManager: SessionManager) {
   const sessions = await sessionManager.listSessions();
   
   if (sessions.length === 0) {
-    console.log(chalk.yellow('没有找到历史会话'));
+    console.log(chalk.yellow('No sessions found'));
     return;
   }
 
@@ -124,7 +120,7 @@ async function interactiveSessionManagement(sessionManager: SessionManager) {
         {
           type: 'list',
           name: 'deleteId',
-          message: '选择要删除的会话:',
+          message: 'Select session to delete:',
           choices
         }
       ]);
@@ -140,24 +136,24 @@ async function interactiveSessionManagement(sessionManager: SessionManager) {
 async function viewSession(sessionManager: SessionManager, sessionId: string) {
   const session = await sessionManager.getSession(sessionId);
   if (!session) {
-    console.log(chalk.red('会话不存在'));
+    console.log(chalk.red('Session not found'));
     return;
   }
 
-  console.log(chalk.cyan(`\n=== 会话 ${sessionId} ===`));
-  console.log(chalk.gray(`开始时间: ${session.startTime.toLocaleString()}`));
-  console.log(chalk.gray(`最后更新: ${session.lastUpdateTime.toLocaleString()}`));
+  console.log(chalk.cyan(`\n=== Session ${sessionId} ===`));
+  console.log(chalk.gray(`Start time: ${session.startTime.toLocaleString()}`));
+  console.log(chalk.gray(`Last update: ${session.lastUpdateTime.toLocaleString()}`));
   console.log();
 
   session.messages.forEach((msg: any, index: number) => {
     if (msg.role === 'user') {
-      console.log(chalk.blue(`[${index}] 用户:`));
+      console.log(chalk.blue(`[${index}] User:`));
       console.log(`  ${msg.content}`);
     } else if (msg.role === 'assistant' && msg.content) {
-      console.log(chalk.green(`[${index}] 助手:`));
+      console.log(chalk.green(`[${index}] Assistant:`));
       console.log(`  ${msg.content}`);
     } else if (msg.role === 'tool') {
-      console.log(chalk.yellow(`[${index}] 工具结果:`));
+      console.log(chalk.yellow(`[${index}] Tool result:`));
       console.log(`  ${msg.content?.toString().slice(0, 100)}...`);
     }
     console.log();
